@@ -8,6 +8,7 @@ const app ={
         this.localArr=window.localStorage.getItem('dinoplasty')
         this.max=0
         this.list = document.querySelector(selectors.listSelector)
+        this.template=document.querySelector(selectors.templateSelector)
         if(this.localArr){
             this.dinos=JSON.parse(this.localArr)
             while(this.list.firstChild){
@@ -42,10 +43,11 @@ const app ={
             name: ev.target.dinoName.value,
             promoted:0,
         }
-        this.dinos.push(dino)
+        this.dinos.unshift(dino)
         //alert(this.dinos)//-- proved to be worked.
         const listItem = this.renderListItem(dino)
-        this.list.appendChild(listItem)
+        this.list.insertBefore(listItem,this.list.firstChild)
+        //This will input the listItem into the bottom of the list:this.list.appendChild(listItem)
         // add the dino to the arrays, it is already in the DOM
         ++ this.max
         ev.target.reset()
@@ -64,12 +66,13 @@ const app ={
         item.style.color="red"
         }
         item.textContent = dino.name
+        item.dataset.id=dino.id  //A Neat Way to store data at backend
         const promoteButton = document.createElement("button");
         promoteButton.setAttribute("class",dino.id)
         promoteButton.className += " button success"; //Let's set it button success for now, we can make it better, won't we?
         promoteButton.innerHTML = "promote";
         promoteButton.style.marginLeft= "1rem"
-        promoteButton.style.marginRight= "1rem"
+        promoteButton.style.marginRight= "1px"
         promoteButton.addEventListener('click',function(){
          dino.promoted=1
          localStorage.setItem('dinoplasty', JSON.stringify(this.dinos));
@@ -78,8 +81,8 @@ const app ={
         const deleteButton = document.createElement("button");
         deleteButton.setAttribute("class",dino.id)
         deleteButton.className += " button success"; //Let's set it button success for now, we can make it better, won't we?
-        deleteButton.style.marginLeft= "1rem"
-        deleteButton.style.marginRight= "1rem"
+        deleteButton.style.marginLeft= "1px"
+        deleteButton.style.marginRight= "1px"
         deleteButton.innerHTML = "delete";
         deleteButton.addEventListener('click',function(){
          
@@ -93,8 +96,8 @@ const app ={
         const moveUpButton = document.createElement("button");
         moveUpButton.setAttribute("class",dino.id)
        moveUpButton.className += " button success"; //Let's set it button success for now, we can make it better, won't we?
-        moveUpButton.style.marginLeft= "1rem"
-        moveUpButton.style.marginRight= "1rem"
+        moveUpButton.style.marginLeft= "1px"
+        moveUpButton.style.marginRight= "1px"
         moveUpButton.innerHTML = "Up";
        moveUpButton.addEventListener('click',function(){
          const index= this.dinos.indexOf(dino)
@@ -116,8 +119,8 @@ const app ={
         const moveDownButton = document.createElement("button");
         moveDownButton.setAttribute("class",dino.id)
        moveDownButton.className += " button success"; //Let's set it button success for now, we can make it better, won't we?
-        moveDownButton.style.marginLeft= "1rem"
-        moveDownButton.style.marginRight= "1rem"
+        moveDownButton.style.marginLeft= "1px"
+        moveDownButton.style.marginRight= "1px"
         moveDownButton.innerHTML = "Down";
        moveDownButton.addEventListener('click',function(){
          const index= this.dinos.indexOf(dino)
@@ -149,4 +152,4 @@ const app ={
     
     
 }
-app.init({formSelector:'#dino-form', listSelector: '#dino-list'})
+app.init({formSelector:'#dino-form', listSelector: '#dino-list',templateSelector: '.dino.template'})
