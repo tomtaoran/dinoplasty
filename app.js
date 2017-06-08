@@ -61,11 +61,13 @@ const app ={
 
     renderListItem(dino){
         
-        let item= document.createElement('li')
+        //let item= document.createElement('li')
+        let item= this.template.cloneNode(true)
+        item.classList.remove('template') //Make them appear again, after taking the template
         if(dino.promoted===1){
         item.style.color="red"
         }
-        item.textContent = dino.name
+        item.querySelector('.dino-name').textContent = dino.name
         item.dataset.id=dino.id  //A Neat Way to store data at backend
         const promoteButton = document.createElement("button");
         promoteButton.setAttribute("class",dino.id)
