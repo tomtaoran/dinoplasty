@@ -1,7 +1,11 @@
 .template{
     /*display: none;*/
-    visibility: hidden;
+    visibility: hidden; /* we don't want user to see a bland template*/
 }
 .actions{
     float: right;
+}
+
+.dino{
+    clear: both;
 }

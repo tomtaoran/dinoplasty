@@ -20,7 +20,7 @@ const app ={
         }
         
         
-        document.querySelector(selectors.formSelector).addEventListener('submit',this.addDino.bind(this))
+        document.querySelector(selectors.formSelector).addEventListener('submit',this.addDinoFromForm.bind(this))
         document.querySelector(selectors.formSelector).addEventListener('submit',this.reRender.bind(this))
         //document.querySelector(selectors.formSelector).dinoName.focus() OLD WAY Support all browser
     },
@@ -35,7 +35,7 @@ const app ={
     },
     
 
-    addDino(ev){
+    addDinoFromForm(ev){
         ev.preventDefault()
          //alert(this.dinos)
         const dino ={
@@ -45,13 +45,17 @@ const app ={
         }
         this.dinos.unshift(dino)
         //alert(this.dinos)//-- proved to be worked.
-        const listItem = this.renderListItem(dino)
+       this.addDino(dino)
+        ev.target.reset()
+        localStorage.setItem('dinoplasty', JSON.stringify(this.dinos));
+    },
+
+    addDino(dino){
+         const listItem = this.renderListItem(dino)
         this.list.insertBefore(listItem,this.list.firstChild)
         //This will input the listItem into the bottom of the list:this.list.appendChild(listItem)
         // add the dino to the arrays, it is already in the DOM
         ++ this.max
-        ev.target.reset()
-        localStorage.setItem('dinoplasty', JSON.stringify(this.dinos));
     },
 
     handlePromote(ev){
@@ -68,6 +72,7 @@ const app ={
         item.style.color="red"
         }
         item.querySelector('.dino-name').textContent = dino.name
+        item.querySelector('button.remove').addEventListener('click',this.removeDino.bind(this))
         item.dataset.id=dino.id  //A Neat Way to store data at backend
         const promoteButton = document.createElement("button");
         promoteButton.setAttribute("class",dino.id)
@@ -151,7 +156,31 @@ const app ={
         localStorage.setItem('dinoplasty', JSON.stringify(this.dinos));
         return item    
     },
-    
+
+    save(){
+        localStorage.setItem('dinoplasty', JSON.stringify(this.dinos));
+    },
+
+    load(){
+        const dinoJSON=window.localStorage.getItem('dinoplasty')
+        const dinoArray= JSON.parse(dinoJSON)
+        if(dinoArray){
+            dinoArray.revese().map(this.addDino.bind(this))
+        }
+    },
+    removeDino(ev){
+        const listItem=ev.target.closest('.dino')
+        listItem.remove()
+        for(let i=0;i<this.dinos.length;i++){
+            const currentId= this.dinos[i].id.toString()
+            if(listItem.dataset.id===currentId){
+                this.dinos.splice(i,1)
+                
+                break;
+            }
+        }
+       this.save()
+    },
     
 }
 app.init({formSelector:'#dino-form', listSelector: '#dino-list',templateSelector: '.dino.template'})
