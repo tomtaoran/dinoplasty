@@ -21,6 +21,7 @@ const app ={
         
         document.querySelector(selectors.formSelector).addEventListener('submit',this.addDino.bind(this))
         document.querySelector(selectors.formSelector).addEventListener('submit',this.reRender.bind(this))
+        //document.querySelector(selectors.formSelector).dinoName.focus() OLD WAY Support all browser
     },
 
     reRender(){
@@ -47,6 +48,7 @@ const app ={
         this.list.appendChild(listItem)
         // add the dino to the arrays, it is already in the DOM
         ++ this.max
+        ev.target.reset()
         localStorage.setItem('dinoplasty', JSON.stringify(this.dinos));
     },
 
