@@ -4,9 +4,13 @@ const app ={
     init(selectors){
         
         this.dinos=[]
-        //localStorage.setItem('dinoplasty', '');
         this.localArr=window.localStorage.getItem('dinoplasty')
+        this.localCounter=window.localStorage.getItem('dinoplastyCounter')
         this.max=0
+        this.clicked=0; // For detect editing efforts
+        if(this.localCounter){
+            this.max=parseInt(this.localCounter)
+        }
         this.list = document.querySelector(selectors.listSelector)
         this.template=document.querySelector(selectors.templateSelector)
         if(this.localArr){
@@ -18,6 +22,7 @@ const app ={
             this.list.appendChild(this.renderListItem(this.dinos[index]))
             }
         }
+        
         
         
         document.querySelector(selectors.formSelector).addEventListener('submit',this.addDinoFromForm.bind(this))
@@ -41,13 +46,15 @@ const app ={
         const dino ={
             id: this.max + 1,
             name: ev.target.dinoName.value,
+            type: ev.target.dinoClass.value,
             promoted:0,
         }
         this.dinos.unshift(dino)
         //alert(this.dinos)//-- proved to be worked.
        this.addDino(dino)
         ev.target.reset()
-        localStorage.setItem('dinoplasty', JSON.stringify(this.dinos));
+        this.save()
+        //localStorage.setItem('dinoplasty', JSON.stringify(this.dinos));
     },
 
     addDino(dino){
@@ -66,12 +73,63 @@ const app ={
     renderListItem(dino){
         
         //let item= document.createElement('li')
+        
         let item= this.template.cloneNode(true)
+        
         item.classList.remove('template') //Make them appear again, after taking the template
         if(dino.promoted===1){
         item.style.color="red"
         }
+        item.querySelector('.dino-type').textContent = dino.type
+        item.querySelector('.between-space').textContent = " : "
         item.querySelector('.dino-name').textContent = dino.name
+        
+        item.querySelector('.dino-type').addEventListener('click', function(){
+         if(item.classList.contains("clicked")){
+             return // We don't do anything if it has been previously clicked
+         }else{
+            item.classList.add("clicked");
+            const saveButton = document.createElement("button");
+            saveButton.setAttribute("class",dino.id)
+            saveButton.className += " button success"; //Let's set it button success for now, we can make it better, won't we?
+            saveButton.innerHTML = "Save my change";
+            saveButton.style.marginLeft= "1rem"
+            saveButton.style.marginRight= "1px"
+            saveButton.addEventListener('click',function(){
+               dino.type=item.querySelector('.dino-type').textContent
+               dino.name=item.querySelector('.dino-name').textContent
+               this.save()
+            }.bind(this))
+            item.appendChild(saveButton)
+         }
+         
+         //alert(this.clicked)
+        }.bind(this))
+        item.querySelector('.dino-name').addEventListener('click', function(){
+         if(item.classList.contains("clicked")){
+             return // We don't do anything if it has been previously clicked
+         }else{
+            item.classList.add("clicked");
+            const saveButton = document.createElement("button");
+            saveButton.setAttribute("class",dino.id)
+            saveButton.className += " button success"; //Let's set it button success for now, we can make it better, won't we?
+            saveButton.innerHTML = "Save my change";
+            saveButton.style.marginLeft= "1rem"
+            saveButton.style.marginRight= "1px"
+            saveButton.addEventListener('click',function(){
+               dino.type=item.querySelector('.dino-type').textContent
+               dino.name=item.querySelector('.dino-name').textContent
+               this.save()
+            }.bind(this))
+            item.appendChild(saveButton)
+         }
+        }.bind(this))
+        
+
+        
+
+        
+        item.querySelector('.dino-name').textContent +=' '+dino.id //For Debugging on ID issue
         item.querySelector('button.remove').addEventListener('click',this.removeDino.bind(this))
         item.dataset.id=dino.id  //A Neat Way to store data at backend
         const promoteButton = document.createElement("button");
@@ -82,7 +140,8 @@ const app ={
         promoteButton.style.marginRight= "1px"
         promoteButton.addEventListener('click',function(){
          dino.promoted=1
-         localStorage.setItem('dinoplasty', JSON.stringify(this.dinos));
+         //localStorage.setItem('dinoplasty', JSON.stringify(this.dinos));
+         this.save()
         }.bind(this))
         //This is redundant, but it seems to be the only way to render on-the-spot
         const deleteButton = document.createElement("button");
@@ -97,7 +156,8 @@ const app ={
          this.dinos.splice(index, 1);
          //alert(this.dinos)
          item.remove()
-         localStorage.setItem('dinoplasty', JSON.stringify(this.dinos));
+         //localStorage.setItem('dinoplasty', JSON.stringify(this.dinos));
+         this.save()
         }.bind(this))
 
         const moveUpButton = document.createElement("button");
@@ -153,19 +213,55 @@ const app ={
         item.appendChild(deleteButton)
         item.appendChild(moveUpButton)
         item.appendChild(moveDownButton)
-        localStorage.setItem('dinoplasty', JSON.stringify(this.dinos));
+        //localStorage.setItem('dinoplasty', JSON.stringify(this.dinos));
+        this.save()
         return item    
     },
 
     save(){
         localStorage.setItem('dinoplasty', JSON.stringify(this.dinos));
+        localStorage.setItem('dinoplastyCounter', JSON.stringify(this.max));
+    },
+    
+    saveEditedChange(){
+        const saveButton = document.createElement("button");
+        promoteButton.setAttribute("class",dino.id)
+        promoteButton.className += " button success"; //Let's set it button success for now, we can make it better, won't we?
+        promoteButton.innerHTML = "promote";
+        promoteButton.style.marginLeft= "1rem"
+        promoteButton.style.marginRight= "1px"
+        promoteButton.addEventListener('click',function(){
+         dino.promoted=1
+         //localStorage.setItem('dinoplasty', JSON.stringify(this.dinos));
+         this.save()
+        }.bind(this))
+        localStorage.setItem('dinoplasty', JSON.stringify(this.dinos));
+        localStorage.setItem('dinoplastyCounter', JSON.stringify(this.max));
+    },
+
+    createSaveButton(){
+            //alert(this)
+            if(true){
+            alert(this)
+            const saveButton = document.createElement("button");
+            saveButton.setAttribute("class",dino.id)
+            saveButton.className += " button success"; //Let's set it button success for now, we can make it better, won't we?
+            saveButton.innerHTML = "Save Edit";
+            saveButton.style.marginLeft= "1rem"
+            saveButton.style.marginRight= "1px"
+            }
     },
 
     load(){
         const dinoJSON=window.localStorage.getItem('dinoplasty')
+        const dinoJSONCounter=window.localStorage.getItem('dinoplastyCounter')
         const dinoArray= JSON.parse(dinoJSON)
+        const dinoCounter=JSON.parse(dinoJSONCounter)
         if(dinoArray){
             dinoArray.revese().map(this.addDino.bind(this))
+        }
+        if(dinoCounter){
+            this.max=dinoCounter
         }
     },
     removeDino(ev){
