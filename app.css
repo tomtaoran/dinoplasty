@@ -6,8 +6,11 @@
     float: right;
 }
 
+
 .dino{
     clear: both;
+    vertical-align:middle;
+    line-height: 3rem;
 }
 
 h1{
@@ -20,4 +23,12 @@ h1{
     left: 0;
     right:0;
     border-color: rgb(237, 239, 230);
+}
+
+
+li:nth-of-type(even) {
+  background-color: rgba(0, 0, 128,0.5);
+}
+li:nth-of-type(odd) {
+  background-color: rgba(114, 0, 39,0.5);
 }
