@@ -1,7 +1,7 @@
 //console.log('It worked!')
-const app ={
+class App {
    
-    init(selectors){
+    constructor(selectors){
         
         this.dinos=[]
         this.localArr=window.localStorage.getItem('dinoplasty')
@@ -28,7 +28,7 @@ const app ={
         document.querySelector(selectors.formSelector).addEventListener('submit',this.addDinoFromForm.bind(this))
         document.querySelector(selectors.formSelector).addEventListener('submit',this.reRender.bind(this))
         //document.querySelector(selectors.formSelector).dinoName.focus() OLD WAY Support all browser
-    },
+    }
 
     reRender(){
         while(this.list.firstChild){
@@ -37,7 +37,7 @@ const app ={
        for (let index = 0; index < this.dinos.length; index++) {
         this.list.appendChild(this.renderListItem(this.dinos[index]))
         }
-    },
+    }
     
 
     addDinoFromForm(ev){
@@ -55,7 +55,7 @@ const app ={
         ev.target.reset()
         this.save()
         //localStorage.setItem('dinoplasty', JSON.stringify(this.dinos));
-    },
+    }
 
     addDino(dino){
          const listItem = this.renderListItem(dino)
@@ -63,7 +63,7 @@ const app ={
         //This will input the listItem into the bottom of the list:this.list.appendChild(listItem)
         // add the dino to the arrays, it is already in the DOM
         ++ this.max
-    },
+    }
 
 
     renderListItem(dino){
@@ -77,8 +77,10 @@ const app ={
         item.classList.add('fav')
         }
         item.querySelector('.dino-type').textContent = dino.type
+        item.querySelector('.dino-type').setAttribute('title', dino.type)
         item.querySelector('.between-space').textContent = " : "
         item.querySelector('.dino-name').textContent = dino.name
+        item.querySelector('.dino-name').setAttribute('title', dino.name)
         // const hiddenButton = document.createElement("button");
         // hiddenButton.innerHTML = "hidden";
         // hiddenButton.classList.add("button-group")
@@ -244,19 +246,19 @@ const app ={
         //localStorage.setItem('dinoplasty', JSON.stringify(this.dinos));
         this.save()
         return item    
-    },
+    }
 
     save(){
         localStorage.setItem('dinoplasty', JSON.stringify(this.dinos));
         localStorage.setItem('dinoplastyCounter', JSON.stringify(this.max));
-    },
+    }
     
 
     saveOnEnter(dino,ev){
         if(ev.key === 'Enter'){
             this.editDino(dino,ev)
         }
-    },
+    }
 
     saveEditedChange(){
         const saveButton = document.createElement("button");
@@ -272,7 +274,7 @@ const app ={
         }.bind(this))
         localStorage.setItem('dinoplasty', JSON.stringify(this.dinos));
         localStorage.setItem('dinoplastyCounter', JSON.stringify(this.max));
-    },
+    }
 
     createSaveButton(){
             //alert(this)
@@ -285,7 +287,7 @@ const app ={
             saveButton.style.marginLeft= "1rem"
             saveButton.style.marginRight= "1px"
             }
-    },
+    }
 
     load(){
         const dinoJSON=window.localStorage.getItem('dinoplasty')
@@ -298,7 +300,7 @@ const app ={
         if(dinoCounter){
             this.max=dinoCounter
         }
-    },
+    }
 
 
     moveUP(dino,ev){
@@ -338,7 +340,7 @@ const app ={
         // }
        this.save()
 
-    },
+    }
 
     moveDown(dino,ev){
         const listItem=ev.target.closest('.dino')
@@ -379,7 +381,7 @@ const app ={
         // }
        //this.save()
 
-    },
+    }
 
     editDino(dino,ev){
          const listItem=ev.target.closest('.dino')
@@ -417,7 +419,7 @@ const app ={
              btn.classList.remove('success')
         }
 
-    },
+    }
 
     favDino(ev){
         const listItem=ev.target.closest('.dino')
@@ -440,7 +442,7 @@ const app ={
         }
        this.save()
 
-    },
+    }
 
     removeDino(ev){
         const listItem=ev.target.closest('.dino')
@@ -459,7 +461,7 @@ const app ={
             }
         }
        this.save()
-    },
+    }
     
 }
-app.init({formSelector:'#dino-form', listSelector: '#dino-list',templateSelector: '.dino.template'})
+const app = new App({formSelector:'#dino-form', listSelector: '#dino-list',templateSelector: '.dino.template'})
