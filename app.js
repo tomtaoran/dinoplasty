@@ -74,7 +74,7 @@ const app ={
         
         item.classList.remove('template') //Make them appear again, after taking the template
         if(dino.promoted===1){
-        item.style.backgroundColor="rgb(235, 89, 255)"
+        item.classList.add('fav')
         }
         item.querySelector('.dino-type').textContent = dino.type
         item.querySelector('.between-space').textContent = " : "
@@ -144,8 +144,8 @@ const app ={
         //item.querySelector('.dino-name').textContent +=' '+dino.id //For Debugging on ID issue
         item.querySelector('button.remove').addEventListener('click',this.removeDino.bind(this))
         item.querySelector('button.fav').addEventListener('click',this.favDino.bind(this))
-        item.querySelector('button.up').addEventListener('click',this.moveUP.bind(this))
-        item.querySelector('button.down').addEventListener('click',this.moveDown.bind(this))
+        item.querySelector('button.up').addEventListener('click',this.moveUP.bind(this,dino))
+        item.querySelector('button.down').addEventListener('click',this.moveDown.bind(this,dino))
         if(index===0){
             item.querySelector('button.up').disabled="true"
         }
@@ -232,7 +232,6 @@ const app ={
     //     }.bind(this))
     
     //     promoteButton.addEventListener('click',function(){
-    //      item.style.backgroundColor="rgb(235, 89, 255)"
     //     })
     //     item.appendChild(promoteButton)
     //     item.appendChild(deleteButton)
@@ -291,68 +290,111 @@ const app ={
     },
 
 
-    moveUP(ev){
+    moveUP(dino,ev){
         const listItem=ev.target.closest('.dino')
-
-        for(let index=0;index<this.dinos.length;index++){
-            const currentId= this.dinos[index].id.toString()
-            if(listItem.dataset.id===currentId){
-                if(index>0){
-                    const dinoBefore=this.dinos[index-1];
-                    const dinoNow=this.dinos[index];
-                    this.dinos[index]=dinoBefore
-                    this.dinos[index-1]=dinoNow
-                    //Debugging: alert(this.dinos)
-                    while(this.list.firstChild){
-                    this.list.removeChild(this.list.firstChild);
-                    }
-                    for (let index = 0; index < this.dinos.length; index++) {
-                    this.list.appendChild(this.renderListItem(this.dinos[index]))
-                    }
-                }
-                
-                break;
-            }
+        
+        const index=this.dinos.findIndex((currentDino,i)=>{
+            return currentDino.id===dino.id
+        })
+        if(index>0){
+            this.list.insertBefore(listItem,listItem.previousElementSibling)
+            const previousDino= this.dinos[index-1]
+            this.dinos[index-1]=dino
+            this.dinos[index]=previousDino
+            this.save()
         }
+        while(this.list.firstChild){
+           this.list.removeChild(this.list.firstChild);
+        }
+        for (let index = 0; index < this.dinos.length; index++) {
+            this.list.appendChild(this.renderListItem(this.dinos[index]))
+        }  
+
+        // for(let index=0;index<this.dinos.length;index++){
+        //     const currentId= this.dinos[index].id.toString()
+        //     if(listItem.dataset.id===currentId){
+        //         if(index>0){
+        //             const dinoBefore=this.dinos[index-1];
+        //             const dinoNow=this.dinos[index];
+        //             this.dinos[index]=dinoBefore
+        //             this.dinos[index-1]=dinoNow
+                    //Debugging: alert(this.dinos)
+                    // while(this.list.firstChild){
+                    // this.list.removeChild(this.list.firstChild);
+                    // }
+                    // for (let index = 0; index < this.dinos.length; index++) {
+                    // this.list.appendChild(this.renderListItem(this.dinos[index]))
+                    // }
+        //         }
+                
+        //         break;
+        //     }
+        // }
        this.save()
 
     },
 
-    moveDown(ev){
+    moveDown(dino,ev){
         const listItem=ev.target.closest('.dino')
-
-        for(let index=0;index<this.dinos.length;index++){
-            const currentId= this.dinos[index].id.toString()
-            if(listItem.dataset.id===currentId){
-
-                if(index<this.dinos.length-1){
-                    const dinoNext=this.dinos[index+1];
-                    const dinoNow=this.dinos[index];
-                    this.dinos[index]=dinoNext
-                    this.dinos[index+1]=dinoNow
-                    //Debugging: alert(this.dinos)
-                    while(this.list.firstChild){
-                    this.list.removeChild(this.list.firstChild);
-                    }
-                    for (let index = 0; index < this.dinos.length; index++) {
-                    this.list.appendChild(this.renderListItem(this.dinos[index]))
-                    }
-                }
-                
-                break;
-            }
+        
+        const index=this.dinos.findIndex((currentDino,i)=>{
+            return currentDino.id===dino.id
+        })
+        if(index<this.dinos.length-1){
+            this.list.insertBefore(listItem.nextElementSibling,listItem)
+            const nextDino= this.dinos[index+1]
+            this.dinos[index+1]=dino
+            this.dinos[index]=nextDino
+            this.save()
         }
+
+        while(this.list.firstChild){
+           this.list.removeChild(this.list.firstChild);
+        }
+        for (let index = 0; index < this.dinos.length; index++) {
+            this.list.appendChild(this.renderListItem(this.dinos[index]))
+        }         
+
+        // for(let index=0;index<this.dinos.length;index++){
+        //     const currentId= this.dinos[index].id.toString()
+        //     if(listItem.dataset.id===currentId){
+
+        //         if(index<this.dinos.length-1){
+        //             const dinoNext=this.dinos[index+1];
+        //             const dinoNow=this.dinos[index];
+        //             this.dinos[index]=dinoNext
+        //             this.dinos[index+1]=dinoNow
+        //             //Debugging: alert(this.dinos)
+        //             while(this.list.firstChild){
+        //             this.list.removeChild(this.list.firstChild);
+        //             }
+        //             for (let index = 0; index < this.dinos.length; index++) {
+        //             this.list.appendChild(this.renderListItem(this.dinos[index]))
+        //             }
+        //         }
+                
+        //         break;
+        //     }
+        // }
        this.save()
 
     },
 
     favDino(ev){
         const listItem=ev.target.closest('.dino')
-        listItem.style.backgroundColor="rgb(235, 89, 255)"
+        
         for(let i=0;i<this.dinos.length;i++){
             const currentId= this.dinos[i].id.toString()
             if(listItem.dataset.id===currentId){
-                this.dinos[i].promoted=1
+                if(this.dinos[i].promoted){
+                    listItem.classList.remove('fav')
+                    this.dinos[i].promoted=0
+                    
+                }else{
+                    listItem.classList.add('fav')
+                    this.dinos[i].promoted=1
+                }
+//this.dinos[i].promoted=!this.dinos[i].promoted
                 
                 break;
             }
