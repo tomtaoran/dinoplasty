@@ -79,73 +79,77 @@ const app ={
         item.querySelector('.dino-type').textContent = dino.type
         item.querySelector('.between-space').textContent = " : "
         item.querySelector('.dino-name').textContent = dino.name
-        const hiddenButton = document.createElement("button");
-        hiddenButton.innerHTML = "hidden";
-        hiddenButton.classList.add("button-group")
-        item.appendChild(hiddenButton)
-        item.querySelector('.dino-type').addEventListener('click', function(){
-         if(item.classList.contains("clicked")){
-             return // We don't do anything if it has been previously clicked
-         }else{
-           item.classList.add("clicked");
-            const listItemSpan = document.createElement('span');
-            listItemSpan.classList.add("button-group");
-            listItemSpan.style.float="right"
-            listItemSpan.style.verticalAlign="middle"
-            const saveButton = document.createElement("button");
-            saveButton.setAttribute("class",dino.id)
-            saveButton.className += " button success"; //Let's set it button success for now, we can make it better, won't we?
+        // const hiddenButton = document.createElement("button");
+        // hiddenButton.innerHTML = "hidden";
+        // hiddenButton.classList.add("button-group")
+        // item.appendChild(hiddenButton)
+        // item.querySelector('.dino-type').addEventListener('click', function(){
+        //  if(item.classList.contains("clicked")){
+        //      return // We don't do anything if it has been previously clicked
+        //  }else{
+        //    item.classList.add("clicked");
+        //     const listItemSpan = document.createElement('span');
+        //     listItemSpan.classList.add("button-group");
+        //     listItemSpan.style.float="right"
+        //     listItemSpan.style.verticalAlign="middle"
+        //     const saveButton = document.createElement("button");
+        //     saveButton.setAttribute("class",dino.id)
+        //     saveButton.className += " button success"; //Let's set it button success for now, we can make it better, won't we?
             
-            saveButton.innerHTML = "Save my change";
-            saveButton.style.marginLeft= "1rem"
-            saveButton.style.marginRight= "1rem"
-            saveButton.style.lineHeight="0"
-            saveButton.addEventListener('click',function(){
-               dino.type=item.querySelector('.dino-type').textContent
-               dino.name=item.querySelector('.dino-name').textContent
-               this.save()
-            }.bind(this))
-            listItemSpan.appendChild(saveButton)
-            item.appendChild(listItemSpan)
-         }
+        //     saveButton.innerHTML = "Save my change";
+        //     saveButton.style.marginLeft= "1rem"
+        //     saveButton.style.marginRight= "1rem"
+        //     saveButton.style.lineHeight="0"
+        //     saveButton.addEventListener('click',function(){
+        //        dino.type=item.querySelector('.dino-type').textContent
+        //        dino.name=item.querySelector('.dino-name').textContent
+        //        this.save()
+        //     }.bind(this))
+        //     listItemSpan.appendChild(saveButton)
+        //     item.appendChild(listItemSpan)
+        //  }
          
-         //alert(this.clicked)
-        }.bind(this))
-        item.querySelector('.dino-name').addEventListener('click', function(){
-         if(item.classList.contains("clicked")){
-             return // We don't do anything if it has been previously clicked
-         }else{
-            item.classList.add("clicked");
-            const listItemSpan = document.createElement('span');
-            listItemSpan.classList.add("button-group");
-            listItemSpan.style.float="right"
-            listItemSpan.style.verticalAlign="middle"
-            const saveButton = document.createElement("button");
-            saveButton.setAttribute("class",dino.id)
-            saveButton.className += " button success"; //Let's set it button success for now, we can make it better, won't we?
+        //  //alert(this.clicked)
+        // }.bind(this))
+        // item.querySelector('.dino-name').addEventListener('click', function(){
+        //  if(item.classList.contains("clicked")){
+        //      return // We don't do anything if it has been previously clicked
+        //  }else{
+        //     item.classList.add("clicked");
+        //     const listItemSpan = document.createElement('span');
+        //     listItemSpan.classList.add("button-group");
+        //     listItemSpan.style.float="right"
+        //     listItemSpan.style.verticalAlign="middle"
+        //     const saveButton = document.createElement("button");
+        //     saveButton.setAttribute("class",dino.id)
+        //     saveButton.className += " button success"; //Let's set it button success for now, we can make it better, won't we?
             
-            saveButton.innerHTML = "Save my change";
-            saveButton.style.marginLeft= "1rem"
-            saveButton.style.marginRight= "1rem"
-            saveButton.style.lineHeight="0"
-            saveButton.addEventListener('click',function(){
-               dino.type=item.querySelector('.dino-type').textContent
-               dino.name=item.querySelector('.dino-name').textContent
-               this.save()
-            }.bind(this))
-            listItemSpan.appendChild(saveButton)
-            item.appendChild(listItemSpan)
-         }
-        }.bind(this))
+        //     saveButton.innerHTML = "Save my change";
+        //     saveButton.style.marginLeft= "1rem"
+        //     saveButton.style.marginRight= "1rem"
+        //     saveButton.style.lineHeight="0"
+        //     saveButton.addEventListener('click',function(){
+        //        dino.type=item.querySelector('.dino-type').textContent
+        //        dino.name=item.querySelector('.dino-name').textContent
+        //        this.save()
+        //     }.bind(this))
+        //     listItemSpan.appendChild(saveButton)
+        //     item.appendChild(listItemSpan)
+        //  }
+        // }.bind(this))
         
 
         
         const index= this.dinos.indexOf(dino)
         //item.querySelector('.dino-name').textContent +=' '+dino.id //For Debugging on ID issue
+        item.querySelector('.dino-name').addEventListener('keypress',this.saveOnEnter.bind(this,dino))
+        item.querySelector('.dino-type').addEventListener('keypress',this.saveOnEnter.bind(this,dino))
+        item.querySelector('button.edit').addEventListener('click',this.editDino.bind(this,dino))
         item.querySelector('button.remove').addEventListener('click',this.removeDino.bind(this))
         item.querySelector('button.fav').addEventListener('click',this.favDino.bind(this))
         item.querySelector('button.up').addEventListener('click',this.moveUP.bind(this,dino))
         item.querySelector('button.down').addEventListener('click',this.moveDown.bind(this,dino))
+        
         if(index===0){
             item.querySelector('button.up').disabled="true"
         }
@@ -247,6 +251,13 @@ const app ={
         localStorage.setItem('dinoplastyCounter', JSON.stringify(this.max));
     },
     
+
+    saveOnEnter(dino,ev){
+        if(ev.key === 'Enter'){
+            this.editDino(dino,ev)
+        }
+    },
+
     saveEditedChange(){
         const saveButton = document.createElement("button");
         promoteButton.setAttribute("class",dino.id)
@@ -303,12 +314,7 @@ const app ={
             this.dinos[index]=previousDino
             this.save()
         }
-        while(this.list.firstChild){
-           this.list.removeChild(this.list.firstChild);
-        }
-        for (let index = 0; index < this.dinos.length; index++) {
-            this.list.appendChild(this.renderListItem(this.dinos[index]))
-        }  
+        this.reRender()
 
         // for(let index=0;index<this.dinos.length;index++){
         //     const currentId= this.dinos[index].id.toString()
@@ -348,12 +354,7 @@ const app ={
             this.save()
         }
 
-        while(this.list.firstChild){
-           this.list.removeChild(this.list.firstChild);
-        }
-        for (let index = 0; index < this.dinos.length; index++) {
-            this.list.appendChild(this.renderListItem(this.dinos[index]))
-        }         
+        this.reRender()       
 
         // for(let index=0;index<this.dinos.length;index++){
         //     const currentId= this.dinos[index].id.toString()
@@ -376,7 +377,45 @@ const app ={
         //         break;
         //     }
         // }
-       this.save()
+       //this.save()
+
+    },
+
+    editDino(dino,ev){
+         const listItem=ev.target.closest('.dino')
+         const nameField= listItem.querySelector('.dino-name')
+         const typeField= listItem.querySelector('.dino-type')
+
+         const btn =listItem.querySelector('.button')
+         const icon = btn.querySelector("i.fa")
+         if(nameField.isContentEditable){
+             nameField.contentEditable=false
+            icon.classList.remove('fa-check')
+             icon.classList.add('fa-pencil')
+             btn.classList.add('success')
+             dino.name=nameField.textContent
+             this.save()
+         }else{
+             nameField.contentEditable=true
+             nameField.focus()
+             icon.classList.remove('fa-pencil')
+             icon.classList.add('fa-check')
+             btn.classList.remove('success')
+         }
+          if(typeField.isContentEditable){
+             typeField.contentEditable=false
+             icon.classList.remove('fa-check')
+             icon.classList.add('fa-pencil')
+             btn.classList.add('success')
+             dino.type=typeField.textContent
+             this.save()
+         }else{
+            typeField.contentEditable=true
+            typeField.focus()
+            icon.classList.remove('fa-pencil')
+             icon.classList.add('fa-check')
+             btn.classList.remove('success')
+        }
 
     },
 

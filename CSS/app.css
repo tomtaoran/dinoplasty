@@ -25,7 +25,7 @@
 
 .dino-name{
     flex-grow: 1;
-
+    margin-right: 1rem;
 }
 
 .actions.button-group{
@@ -57,7 +57,7 @@ li:nth-of-type(odd) {
   background-color: rgba(114, 0, 39,0.5);
 }
 
-.dino:first-child.up, .dino:last-child.down{
+.dino:first-child .up, .dino:last-child .down{
     background-color: #ddd;
     color: #eee;
     cursor: not-allowed;
