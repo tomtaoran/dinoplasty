@@ -80,3 +80,45 @@ li:nth-of-type(odd) {
     cursor: not-allowed;
 }
 
+#unknown{
+    color: #000; 
+    opacity: 1;
+
+}
+
+div.input-group{
+    margin-bottom: 0px;
+}
+table{
+    margin-bottom: 0px;
+}
+
+table tbody td, table tbody th {
+    padding: 0rem;
+}
+
+#dino-heading-carnivores{
+    color: rgb(138,7,7)
+}
+
+#dino-heading-herbivores{
+    color: #7cfc00
+}
+
+#dino-heading-omnivores{
+    color: rgb(255,255,7)
+}
+
+#dino-heading-undefined{
+    color: rgb(138,144,155)
+}
+#inputbutton, #searchbutton{
+    padding: 0;
+}
+#inputdiv{
+    padding:0;
+}
+
+#dino-table, #dino-search-table{
+    padding:0;
+}

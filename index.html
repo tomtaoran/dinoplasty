@@ -12,12 +12,12 @@
     </head>
     <body>
         <div class="row">
-            <div class="medium-8 medium-offset-2 column">
+            <div class="medium-8 medium-offset-2 column" id="inputdiv">
                 <h1><i><b>Dinoplasty</b></i></h1>
                 <form id="dino-form">
                     <div class="input-group">
                        
-                        <table style="width:100%">
+                        <table style="width:100%" class="medium-8 column" id="dino-table">
                             <!--Don't think this is "simplicity" of beauty
                             <tr>
                                 <th>Name of the Dinosaur</th>
@@ -28,35 +28,62 @@
                                 <!--class="input-group-field"-->
                                 <td><input type="text"  class="input-group-field" style="width:100%" name="dinoName" placeholder="Name a dinosaur" autofocus required> </td>
                                 <td>
-                                    <select class="input-group-field" name="dinoClass" required>
-                                    <option value="" disabled selected>Select by its eating habbit</option>
-                                    <option value="Carnivornes">Carnivornes</option>
+                                    <select class="input-group-field" name="dinoClass">
+                                    <option value="Unknown" selected>Optional: Type</option>
+                                    <option value="Carnivores">Carnivores</option>
                                     <option value="Herbivores">Herbivores</option>
                                     <option value="Omnivores">Omnivores</option>
                                     </select>
                                 </td> 
                                 <td>
                                     <div class="input-group-button"> 
-                                    <button class="button success" type="submit" > 
-                                      <i class="fa fa-paw" aria-hidden="true">Add</i>
+                                    <button class="button success" style="width:100%"  type="submit" id="inputbutton"> 
+                                      <i class="fa fa-paw" aria-hidden="true" >Add</i>
                                     </button> 
 
                                      </div>
                                 </td>
                             </tr>
                         </table> 
-                        
-             
-                    
+                </form>
+                <form id="search-form">
+                    <div class="input-group">
+                       
+                        <table style="width:100%" class="medium-8 column" id="dino-search-table">
+                            <tr>
+                                <td><input type="text"  class="input-group-field" style="width:100%" name="dinoNameSearch" placeholder="Search by Name..."> </td>
+                                <td>
+                                    <select class="input-group-field" name="dinoClassSearch">
+                                    <option value="Unknown" selected>Optional: Type</option>
+                                    <option value="Carnivores">Carnivores</option>
+                                    <option value="Herbivores">Herbivores</option>
+                                    <option value="Omnivores">Omnivores</option>
+                                    </select>
+                                </td> 
+                                <td>
+                                    <div class="input-group-button"> 
+                                    <button class="button warning" style="width:100%"  type="submit" id="searchbutton"> 
+                                      <i class="fa fa-search" aria-hidden="true" >Search</i>
+                                    </button> 
+
+                                     </div>
+                                </td>
+                            </tr>
+                        </table> 
                 </form>
             </div>
         </div>
         <div class="row">
-            <div class="medium-8 medium-offset-2 column">
-                <ul id="dino-list" class="no-bullet">
-                    
-                </ul>
-               
+            <div>
+                <h5 id="no-results"><i><b>No Results Found</b></i></h5>
+                <h3 id="dino-heading-carnivores"><i><b>Carnivores</b></i></h3>
+                <ul id="dino-list-carnivores" class="no-bullet"></ul>
+                <h3 id="dino-heading-herbivores"><i><b>Herbivores</b></i></h3>
+                <ul id="dino-list-herbivores" class="no-bullet"></ul>
+                <h3 id="dino-heading-omnivores"><i><b>Omnivores</b></i></h3>
+                <ul id="dino-list-omnivores" class="no-bullet"></ul>
+                <h3 id="dino-heading-undefined"><i><b>Unknown</b></i></h3>
+                <ul id="dino-list-undefined" class="no-bullet"></ul>
             </div>
         </div>
 

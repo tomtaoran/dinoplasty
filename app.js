@@ -4,43 +4,271 @@ class App {
     constructor(selectors){
         
         this.dinos=[]
+        this.searchMode=0;
         this.localArr=window.localStorage.getItem('dinoplasty')
         this.localCounter=window.localStorage.getItem('dinoplastyCounter')
         this.max=0
-        this.clicked=0; // For detect editing efforts
+        //this.clicked=0; // For detect editing efforts
         if(this.localCounter){
             this.max=parseInt(this.localCounter)
         }
-        this.list = document.querySelector(selectors.listSelector)
+        this.carnivoresList = document.querySelector(selectors.carnivoresListSelector)
+        this.herbivoresList = document.querySelector(selectors.herbivoresListSelector)
+        this.omnivoresList = document.querySelector(selectors.omnivoresListSelector)
+        this.undefinedList = document.querySelector(selectors.undefinedListSelector)
+        this.carnivoresHeading = document.querySelector(selectors.carnivoresHeading)
+        this.herbivoresHeading = document.querySelector(selectors.herbivoresHeading)
+        this.omnivoresHeading = document.querySelector(selectors.omnivoresHeading)
+        this.undefinedHeading = document.querySelector(selectors.undefinedHeading)
         this.template=document.querySelector(selectors.templateSelector)
         if(this.localArr){
             this.dinos=JSON.parse(this.localArr)
-            while(this.list.firstChild){
-            this.list.removeChild(this.list.firstChild);
-            }
-            for (let index = 0; index < this.dinos.length; index++) {
-            this.list.appendChild(this.renderListItem(this.dinos[index]))
-            }
+        }
+        this.reRender()
+        if(this.searchMode){
+            this.searchDinoFromForm()
         }
         
         
-        
+        document.querySelector('#no-results').style.display="none"
         document.querySelector(selectors.formSelector).addEventListener('submit',this.addDinoFromForm.bind(this))
         document.querySelector(selectors.formSelector).addEventListener('submit',this.reRender.bind(this))
+        document.querySelector('#search-form').addEventListener('submit',this.searchDinoFromForm.bind(this))
         //document.querySelector(selectors.formSelector).dinoName.focus() OLD WAY Support all browser
     }
 
     reRender(){
-        while(this.list.firstChild){
-        this.list.removeChild(this.list.firstChild);
+         document.querySelector('#no-results').style.display="none"
+        this.carnivoresHeading.style.display = "none"; 
+        this.herbivoresHeading.style.display = "none"; 
+        this.omnivoresHeading.style.display = "none"; 
+        this.undefinedHeading.style.display = "none"; 
+        while(this.carnivoresList.firstChild){
+            this.carnivoresList.removeChild(this.carnivoresList.firstChild);
+        }
+        while(this.herbivoresList.firstChild){
+            this.herbivoresList.removeChild(this.herbivoresList.firstChild);
+        }
+        while(this.omnivoresList.firstChild){
+            this.omnivoresList.removeChild(this.omnivoresList.firstChild);
+        }
+        while(this.undefinedList.firstChild){
+            this.undefinedList.removeChild(this.undefinedList.firstChild);
         }
        for (let index = 0; index < this.dinos.length; index++) {
-        this.list.appendChild(this.renderListItem(this.dinos[index]))
+           if(this.dinos[index].type === 'Carnivores'){
+               this.carnivoresHeading.style.display = "initial";
+               this.carnivoresList.appendChild(this.renderListItem(this.dinos[index]))
+           }else if(this.dinos[index].type === 'Herbivores'){
+               this.herbivoresHeading.style.display = "initial";
+               this.herbivoresList.appendChild(this.renderListItem(this.dinos[index]))
+           }else if(this.dinos[index].type === 'Omnivores'){
+               this.omnivoresHeading.style.display = "initial";
+               this.omnivoresList.appendChild(this.renderListItem(this.dinos[index]))
+           }else{
+                this.undefinedHeading.style.display = "initial";
+                this.undefinedList.appendChild(this.renderListItem(this.dinos[index]))
+           }
+        
+        }
+        if(this.carnivoresList.firstChild){
+            this.carnivoresList.firstChild.querySelector('button.up').disabled="true"
+        }
+        if(this.carnivoresList.lastChild){
+            this.carnivoresList.lastChild.querySelector('button.down').disabled="true"
+        }
+        if(this.herbivoresList.firstChild){
+            this.herbivoresList.firstChild.querySelector('button.up').disabled="true"
+        }
+        if(this.herbivoresList.lastChild){
+            this.herbivoresList.lastChild.querySelector('button.down').disabled="true"
+        }
+        if(this.omnivoresList.firstChild){
+            this.omnivoresList.firstChild.querySelector('button.up').disabled="true"
+        }
+        if(this.omnivoresList.lastChild){
+            this.omnivoresList.lastChild.querySelector('button.down').disabled="true"
+        }
+        if(this.undefinedList.firstChild){
+            this.undefinedList.firstChild.querySelector('button.up').disabled="true"
+        }
+        if(this.undefinedList.lastChild){
+            this.undefinedList.lastChild.querySelector('button.down').disabled="true"
+        }
+        
+
+    }
+    searchDinoFromForm(ev){
+         document.querySelector('#no-results').style.display="none"
+        if(ev){
+            ev.preventDefault()
+        }
+        let resultCount=0;
+        this.searchMode=1;
+        const requirements={
+            name: document.querySelector('#search-form').dinoNameSearch.value,
+            type: document.querySelector('#search-form').dinoClassSearch.value,
+        }
+        document.querySelector('#search-form').reset()
+        const carnivores=this.carnivoresList.childNodes;
+        const herbivores=this.herbivoresList.childNodes;
+        const omnivores=this.omnivoresList.childNodes;
+        const unknowns=this.undefinedList.childNodes;
+        this.carnivoresHeading.style.display = "none"; 
+        this.herbivoresHeading.style.display = "none"; 
+        this.omnivoresHeading.style.display = "none"; 
+        this.undefinedHeading.style.display = "none"; 
+        for(let a=0; a<carnivores.length; a++){
+                carnivores[a].style.display="none";
+        }
+        for(let b=0; b<herbivores.length; b++){
+                herbivores[b].style.display="none";
+        }
+        for(let c=0; c<omnivores.length; c++){
+                omnivores[c].style.display="none";
+        }
+        for(let d=0; d<unknowns.length; d++){
+                unknowns[d].style.display="none";
+        }
+
+        if(!requirements.name && requirements.type==="Unknown"){
+           for(let a=0; a<carnivores.length; a++){
+                this.carnivoresHeading.style.display = "initial"; 
+                carnivores[a].style.display="flex";
+                resultCount++;
+            }
+            for(let b=0; b<herbivores.length; b++){
+                this.herbivoresHeading.style.display = "initial"; 
+                    herbivores[b].style.display="flex";
+                    resultCount++;
+            }
+            for(let c=0; c<omnivores.length; c++){
+                this.omnivoresHeading.style.display = "initial"; 
+                    omnivores[c].style.display="flex";
+                    resultCount++;
+            }
+            for(let d=0; d<unknowns.length; d++){
+                this.undefinedHeading.style.display = "initial"; 
+                    unknowns[d].style.display="flex";
+                    resultCount++;
+            }
+            this.searchMode=0;
+        }else if(requirements.name && requirements.type==="Unknown"){
+           
+            for(let i=0;i<this.dinos.length;i++){
+                if(this.dinos[i].name.includes(requirements.name)){
+                    const index=this.dinos[i].id;
+                    for(let a=0; a<carnivores.length; a++){
+                        if(carnivores[a].dataset.id==index){
+                             this.carnivoresHeading.style.display = "initial"; 
+                            carnivores[a].style.display="flex";
+                            resultCount++;
+                        }
+                    }
+                    for(let b=0; b<herbivores.length; b++){
+                        if(herbivores[b].dataset.id==index){
+                        this.herbivoresHeading.style.display = "initial"; 
+                        herbivores[b].style.display="flex";
+                        resultCount++;
+                        }
+                    }
+                    for(let c=0; c<omnivores.length; c++){
+                        if(omnivores[c].dataset.id==index){
+                            this.omnivoresHeading.style.display = "initial"; 
+                        omnivores[c].style.display="flex";
+                        resultCount++;
+                        }
+                    }
+                    for(let d=0; d<unknowns.length; d++){
+                        if(unknowns[d].dataset.id==index){
+                            this.undefinedHeading.style.display = "initial"; 
+                             unknowns[d].style.display="flex";
+                             resultCount++;
+                        }
+                       
+                        }
+                    }
+                }
+            }else if(!requirements.name && requirements.type!=="Unknown"){
+            for(let i=0;i<this.dinos.length;i++){
+                if(this.dinos[i].type===requirements.type){
+                    const index=this.dinos[i].id;
+                    for(let a=0; a<carnivores.length; a++){
+                        if(carnivores[a].dataset.id==index){
+                             this.carnivoresHeading.style.display = "initial"; 
+                            carnivores[a].style.display="flex";
+                            resultCount++;
+                        }
+                    }
+                    for(let b=0; b<herbivores.length; b++){
+                        if(herbivores[b].dataset.id==index){
+                        this.herbivoresHeading.style.display = "initial"; 
+                        herbivores[b].style.display="flex";
+                        resultCount++;
+                        }
+                    }
+                    for(let c=0; c<omnivores.length; c++){
+                        if(omnivores[c].dataset.id==index){
+                            this.omnivoresHeading.style.display = "initial"; 
+                        omnivores[c].style.display="flex";
+                        resultCount++;
+                        }
+                    }
+                    for(let d=0; d<unknowns.length; d++){
+                        if(unknowns[d].dataset.id==index){
+                            this.undefinedHeading.style.display = "initial"; 
+                             unknowns[d].style.display="flex";
+                             resultCount++;
+                        }
+                       
+                        }
+                }
+            }
+        }else{
+            for(let i=0;i<this.dinos.length;i++){
+                if(this.dinos[i].type===requirements.type && this.dinos[i].name.includes(requirements.name)){
+                    const index=this.dinos[i].id;
+                    for(let a=0; a<carnivores.length; a++){
+                        if(carnivores[a].dataset.id==index){
+                             this.carnivoresHeading.style.display = "initial"; 
+                            carnivores[a].style.display="flex";
+                            resultCount++;
+                        }
+                    }
+                    for(let b=0; b<herbivores.length; b++){
+                        if(herbivores[b].dataset.id==index){
+                        this.herbivoresHeading.style.display = "initial"; 
+                        herbivores[b].style.display="flex";
+                        resultCount++;
+                        }
+                    }
+                    for(let c=0; c<omnivores.length; c++){
+                        if(omnivores[c].dataset.id==index){
+                        this.omnivoresHeading.style.display = "initial"; 
+                        omnivores[c].style.display="flex";
+                        resultCount++;
+                        }
+                    }
+                    for(let d=0; d<unknowns.length; d++){
+                        if(unknowns[d].dataset.id==index){
+                            this.undefinedHeading.style.display = "initial"; 
+                             unknowns[d].style.display="flex";
+                             resultCount++;
+                        }
+                        }
+                }
+            }
+        }
+        if(resultCount===0){
+            document.querySelector('#no-results').style.display="initial"
         }
     }
-    
 
     addDinoFromForm(ev){
+        if(this.searchMode){
+                 document.querySelector('#search-form').reset()
+        }
+        this.searchMode=0;
         ev.preventDefault()
          //alert(this.dinos)
         const dino ={
@@ -59,7 +287,16 @@ class App {
 
     addDino(dino){
          const listItem = this.renderListItem(dino)
-        this.list.insertBefore(listItem,this.list.firstChild)
+         if(dino.type === 'Carnivores'){
+               this.carnivoresList.insertBefore(listItem,this.carnivoresList.firstChild)
+           }else if(dino.type === 'Herbivores'){
+               this.herbivoresList.insertBefore(listItem,this.herbivoresList.firstChild)
+           }else if(dino.type === 'Omnivores'){
+               this.omnivoresList.insertBefore(listItem,this.omnivoresList.firstChild)
+           }else{
+                this.undefinedList.insertBefore(listItem,this.undefinedList.firstChild)
+           }
+        //this.list.insertBefore(listItem,this.list.firstChild)
         //This will input the listItem into the bottom of the list:this.list.appendChild(listItem)
         // add the dino to the arrays, it is already in the DOM
         ++ this.max
@@ -304,19 +541,38 @@ class App {
 
 
     moveUP(dino,ev){
+        //this.list.insertBefore(listItem,listItem.previousElementSibling)
         const listItem=ev.target.closest('.dino')
-        
+        const previousListItem=listItem.previousElementSibling
         const index=this.dinos.findIndex((currentDino,i)=>{
             return currentDino.id===dino.id
         })
+        if(previousListItem){
+            const previousElementIndex=parseInt(listItem.previousElementSibling.dataset.id)
+        }
+        const currentElementIndex=parseInt(listItem.dataset.id)
         if(index>0){
-            this.list.insertBefore(listItem,listItem.previousElementSibling)
-            const previousDino= this.dinos[index-1]
-            this.dinos[index-1]=dino
-            this.dinos[index]=previousDino
-            this.save()
+                let currentDinoinDinos=currentElementIndex
+                let previousDinoinDinos=currentElementIndex-1
+                for(let i=0;i<this.dinos.length;i++){
+                    const currentId= this.dinos[i].id
+                    if(currentElementIndex===currentId){
+                        currentDinoinDinos=i
+                    }
+                    if(listItem.previousElementSibling.dataset.id==currentId){
+                        previousDinoinDinos=i
+                    }
+                }
+                const previousDino= this.dinos[previousDinoinDinos]
+                this.dinos[previousDinoinDinos]=this.dinos[currentDinoinDinos]
+                this.dinos[currentDinoinDinos]=previousDino
+                this.save()
+           
         }
         this.reRender()
+        if(this.searchMode){
+            this.searchDinoFromForm()
+        }
 
         // for(let index=0;index<this.dinos.length;index++){
         //     const currentId= this.dinos[index].id.toString()
@@ -343,20 +599,38 @@ class App {
     }
 
     moveDown(dino,ev){
+        //this.list.insertBefore(listItem.nextElementSibling,listItem)
         const listItem=ev.target.closest('.dino')
-        
+        const nextListItem=listItem.nextElementSibling
         const index=this.dinos.findIndex((currentDino,i)=>{
             return currentDino.id===dino.id
         })
+        if(nextListItem){
+            const nextElementIndex=parseInt(listItem.nextElementSibling.dataset.id)
+        }
+        const currentElementIndex=parseInt(listItem.dataset.id)
         if(index<this.dinos.length-1){
-            this.list.insertBefore(listItem.nextElementSibling,listItem)
-            const nextDino= this.dinos[index+1]
-            this.dinos[index+1]=dino
-            this.dinos[index]=nextDino
+            let currentDinoinDinos=currentElementIndex
+            let nextDinoinDinos=currentElementIndex+1
+            for(let i=0;i<this.dinos.length;i++){
+                const currentId= this.dinos[i].id
+                if(currentElementIndex===currentId){
+                    currentDinoinDinos=i
+                }
+                if(listItem.nextElementSibling.dataset.id==currentId){
+                    nextDinoinDinos=i
+                }
+            }
+            const nextDino= this.dinos[nextDinoinDinos]
+            this.dinos[nextDinoinDinos]=this.dinos[currentDinoinDinos]
+            this.dinos[currentDinoinDinos]=nextDino
             this.save()
         }
 
-        this.reRender()       
+        this.reRender()
+        if(this.searchMode){
+            this.searchDinoFromForm()
+        }
 
         // for(let index=0;index<this.dinos.length;index++){
         //     const currentId= this.dinos[index].id.toString()
@@ -411,6 +685,11 @@ class App {
              btn.classList.add('success')
              dino.type=typeField.textContent
              this.save()
+             if(this.searchMode){
+                 document.querySelector('#search-form').reset()
+                 document.querySelector('#search-form').dinoNameSearch.placeholder="Please Retype to Search Again"
+             }
+             this.reRender()
          }else{
             typeField.contentEditable=true
             typeField.focus()
@@ -451,12 +730,10 @@ class App {
             const currentId= this.dinos[i].id.toString()
             if(listItem.dataset.id===currentId){
                 this.dinos.splice(i,1)
-                while(this.list.firstChild){
-                    this.list.removeChild(this.list.firstChild);
-                    }
-                    for (let index = 0; index < this.dinos.length; index++) {
-                    this.list.appendChild(this.renderListItem(this.dinos[index]))
-                    }
+                this.reRender()
+                if(this.searchMode){
+                this.searchDinoFromForm()
+                }
                 break;
             }
         }
@@ -464,4 +741,8 @@ class App {
     }
     
 }
-const app = new App({formSelector:'#dino-form', listSelector: '#dino-list',templateSelector: '.dino.template'})
+const app = new App({formSelector:'#dino-form', carnivoresListSelector: '#dino-list-carnivores',
+herbivoresListSelector: '#dino-list-herbivores',omnivoresListSelector: '#dino-list-omnivores',
+undefinedListSelector: '#dino-list-undefined',templateSelector: '.dino.template',
+carnivoresHeading:'#dino-heading-carnivores',herbivoresHeading:'#dino-heading-herbivores',
+omnivoresHeading:'#dino-heading-omnivores',undefinedHeading:'#dino-heading-undefined'})
