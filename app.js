@@ -4,6 +4,7 @@ class App {
     constructor(selectors){
         
         this.dinos=[]
+        this.searchRequirement={}
         this.searchMode=0;
         this.localArr=window.localStorage.getItem('dinoplasty')
         this.localCounter=window.localStorage.getItem('dinoplastyCounter')
@@ -33,6 +34,7 @@ class App {
         document.querySelector('#no-results').style.display="none"
         document.querySelector(selectors.formSelector).addEventListener('submit',this.addDinoFromForm.bind(this))
         document.querySelector(selectors.formSelector).addEventListener('submit',this.reRender.bind(this))
+        document.querySelector('#search-form').addEventListener('submit',this.saveSearchRequirement.bind(this))
         document.querySelector('#search-form').addEventListener('submit',this.searchDinoFromForm.bind(this))
         //document.querySelector(selectors.formSelector).dinoName.focus() OLD WAY Support all browser
     }
@@ -98,16 +100,26 @@ class App {
         
 
     }
+
+    saveSearchRequirement(ev){
+        this.searchRequirement.name=ev.target.dinoNameSearch.value
+        this.searchRequirement.type=ev.target.dinoClassSearch.value
+    }
+
     searchDinoFromForm(ev){
          document.querySelector('#no-results').style.display="none"
         if(ev){
             ev.preventDefault()
         }
         let resultCount=0;
+        let resultCarnivores=0;
+        let resultHerbivores=0;
+        let resultOmnivores=0;
+        let resultundefined=0;
         this.searchMode=1;
         const requirements={
-            name: document.querySelector('#search-form').dinoNameSearch.value,
-            type: document.querySelector('#search-form').dinoClassSearch.value,
+            name: this.searchRequirement.name,
+            type: this.searchRequirement.type,
         }
         document.querySelector('#search-form').reset()
         const carnivores=this.carnivoresList.childNodes;
@@ -136,21 +148,26 @@ class App {
                 this.carnivoresHeading.style.display = "initial"; 
                 carnivores[a].style.display="flex";
                 resultCount++;
+                resultCarnivores++;
+                
             }
             for(let b=0; b<herbivores.length; b++){
                 this.herbivoresHeading.style.display = "initial"; 
                     herbivores[b].style.display="flex";
                     resultCount++;
+                    resultHerbivores++;
             }
             for(let c=0; c<omnivores.length; c++){
                 this.omnivoresHeading.style.display = "initial"; 
                     omnivores[c].style.display="flex";
                     resultCount++;
+                    resultOmnivores++;
             }
             for(let d=0; d<unknowns.length; d++){
                 this.undefinedHeading.style.display = "initial"; 
                     unknowns[d].style.display="flex";
                     resultCount++;
+                    resultundefined++;
             }
             this.searchMode=0;
         }else if(requirements.name && requirements.type==="Unknown"){
@@ -163,6 +180,7 @@ class App {
                              this.carnivoresHeading.style.display = "initial"; 
                             carnivores[a].style.display="flex";
                             resultCount++;
+                            resultCarnivores++;
                         }
                     }
                     for(let b=0; b<herbivores.length; b++){
@@ -170,6 +188,7 @@ class App {
                         this.herbivoresHeading.style.display = "initial"; 
                         herbivores[b].style.display="flex";
                         resultCount++;
+                        resultHerbivores++;
                         }
                     }
                     for(let c=0; c<omnivores.length; c++){
@@ -177,6 +196,7 @@ class App {
                             this.omnivoresHeading.style.display = "initial"; 
                         omnivores[c].style.display="flex";
                         resultCount++;
+                        resultOmnivores++;
                         }
                     }
                     for(let d=0; d<unknowns.length; d++){
@@ -184,6 +204,7 @@ class App {
                             this.undefinedHeading.style.display = "initial"; 
                              unknowns[d].style.display="flex";
                              resultCount++;
+                             resultundefined++;
                         }
                        
                         }
@@ -198,6 +219,7 @@ class App {
                              this.carnivoresHeading.style.display = "initial"; 
                             carnivores[a].style.display="flex";
                             resultCount++;
+                            resultCarnivores++;
                         }
                     }
                     for(let b=0; b<herbivores.length; b++){
@@ -205,6 +227,7 @@ class App {
                         this.herbivoresHeading.style.display = "initial"; 
                         herbivores[b].style.display="flex";
                         resultCount++;
+                        resultHerbivores++;
                         }
                     }
                     for(let c=0; c<omnivores.length; c++){
@@ -212,6 +235,7 @@ class App {
                             this.omnivoresHeading.style.display = "initial"; 
                         omnivores[c].style.display="flex";
                         resultCount++;
+                        resultOmnivores++;
                         }
                     }
                     for(let d=0; d<unknowns.length; d++){
@@ -219,6 +243,7 @@ class App {
                             this.undefinedHeading.style.display = "initial"; 
                              unknowns[d].style.display="flex";
                              resultCount++;
+                             resultundefined++;
                         }
                        
                         }
@@ -233,6 +258,7 @@ class App {
                              this.carnivoresHeading.style.display = "initial"; 
                             carnivores[a].style.display="flex";
                             resultCount++;
+                            resultCarnivores++;
                         }
                     }
                     for(let b=0; b<herbivores.length; b++){
@@ -240,6 +266,7 @@ class App {
                         this.herbivoresHeading.style.display = "initial"; 
                         herbivores[b].style.display="flex";
                         resultCount++;
+                        resultHerbivores++;
                         }
                     }
                     for(let c=0; c<omnivores.length; c++){
@@ -247,6 +274,7 @@ class App {
                         this.omnivoresHeading.style.display = "initial"; 
                         omnivores[c].style.display="flex";
                         resultCount++;
+                        resultOmnivores++;
                         }
                     }
                     for(let d=0; d<unknowns.length; d++){
@@ -254,6 +282,7 @@ class App {
                             this.undefinedHeading.style.display = "initial"; 
                              unknowns[d].style.display="flex";
                              resultCount++;
+                             resultundefined++;
                         }
                         }
                 }
@@ -262,6 +291,43 @@ class App {
         if(resultCount===0){
             document.querySelector('#no-results').style.display="initial"
         }
+        
+        if(resultCarnivores==1){
+            for(let e=0; e<this.carnivoresList.childNodes.length;e++){
+                if(this.carnivoresList.childNodes[e].style.display=="flex"){
+                    this.carnivoresList.childNodes[e].querySelector('button.up').disabled="true"
+                    this.carnivoresList.childNodes[e].querySelector('button.down').disabled="true"
+                }
+            }
+        }
+
+         if(resultHerbivores==1){
+            for(let e=0; e<this.herbivoresList.childNodes.length;e++){
+                if(this.herbivoresList.childNodes[e].style.display=="flex"){
+                    this.herbivoresList.childNodes[e].querySelector('button.up').disabled="true"
+                    this.herbivoresList.childNodes[e].querySelector('button.down').disabled="true"
+                }
+            }
+        }
+
+         if(resultOmnivores==1){
+            for(let e=0; e<this.omnivoresList.childNodes.length;e++){
+                if(this.omnivoresList.childNodes[e].style.display=="flex"){
+                    this.omnivoresList.childNodes[e].querySelector('button.up').disabled="true"
+                    this.omnivoresList.childNodes[e].querySelector('button.down').disabled="true"
+                }
+            }
+        }
+
+         if(resultundefined==1){
+            for(let e=0; e<this.undefinedList.childNodes.length;e++){
+                if(this.undefinedList.childNodes[e].style.display=="flex"){
+                    this.undefinedList.childNodes[e].querySelector('button.up').disabled="true"
+                    this.undefinedList.childNodes[e].querySelector('button.down').disabled="true"
+                }
+            }
+        }
+
     }
 
     addDinoFromForm(ev){
@@ -516,7 +582,6 @@ class App {
     createSaveButton(){
             //alert(this)
             if(true){
-            alert(this)
             const saveButton = document.createElement("button");
             saveButton.setAttribute("class",dino.id)
             saveButton.className += " button success"; //Let's set it button success for now, we can make it better, won't we?
